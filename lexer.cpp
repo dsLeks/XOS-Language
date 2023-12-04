@@ -2,35 +2,83 @@
 #include <string>
 #include <stdlib.h>
 #include <ctype.h>
+#include <iostream>
 
-class Lexer
+Lexer::Lexer(const char *f)
 {
-    static std::string IdentifierStr;
-    static double NumVal;
+    fp = fopen(f, "r");
+};
 
-public:
-    static int get_next_token()
+int Lexer::get_next_token()
+{
+    char ch = getc(fp);
+
+    // skip the whitespace
+    while (ch == ' ' || ch == '\n')
     {
-        static int last_char = ' ';
+        ch = getc(fp);
+    }
 
-        // skip the whitespace
-        while (isspace(last_char))
+    if (ch == EOF)
+        return tok_eof;
+
+    if (ch == '=')
+    {
+        ch = getc(fp);
+        if (ch == '>')
         {
-            last_char = getchar();
+            return tok_arrow;
         }
-
-        if (isalpha(last_char))
+        else
         {
-            IdentifierStr = last_char;
-            while (isalnum((last_char = getchar())))
-            {
-                IdentifierStr += last_char;
-            }
-            if (IdentifierStr == "main")
-                return tok_main;
-
-            if (IdentifierStr == "out")
-                return tok_out;
+            ungetc(ch, fp);
+            return '9999999';
         }
     }
-};
+    if (ch == '(')
+    {
+        return tok_lparen;
+    }
+    if (ch == ')')
+    {
+        return tok_rparen;
+    }
+
+    if (ch == '"')
+    {
+        IdentifierStr = "";
+        ch = getc(fp);
+        while (ch != '"')
+        {
+            IdentifierStr += ch;
+            ch = getc(fp);
+        }
+        return tok_string;
+    }
+
+    if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF)
+    {
+        IdentifierStr = "";
+        while (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF)
+        {
+
+            IdentifierStr += ch;
+            ch = getc(fp);
+        }
+        // if (ch != EOF)
+        ungetc(ch, fp);
+        if (IdentifierStr == "main")
+        {
+
+            return tok_main;
+        }
+
+        if (IdentifierStr == "out")
+        {
+
+            return tok_out;
+        }
+    }
+
+    return tok_identifier;
+}

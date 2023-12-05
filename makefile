@@ -1,6 +1,20 @@
-all: lexer.o
-	g++ -std=c++11 main.cpp lexer.o -o main
-lexer.o: lexer.cpp
-	g++ -std=c++11 -c lexer.cpp -o lexer.o
+CC ?= gcc  # version?
+CXX ?= g++
+CPPFLAGS = -std=c++11  # TODO: Update to c++17?
+
+# Add new source files here.
+SRCS = main.cpp lexer.cpp
+
+OBJS = $(SRCS:.cpp=.o)
+EXE = main
+
+all: $(EXE)
+
+$(EXE): $(OBJS)
+	$(CXX) $(CPPFLAGS) $? -o $@
+
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) -c $< -o $@
+
 clean:
-	rm -rf *.o main
+	rm -rf $(OBJS) $(EXE)

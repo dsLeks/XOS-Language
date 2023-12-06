@@ -1,47 +1,75 @@
+#include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "xos.h"
 
-Lexer::Lexer(const char *f) { fp = fopen(f, "r"); };
+namespace xos {
 
-int Lexer::get_next_token() {
-  char ch = getc(fp);
+Lexer::Lexer(const char *f) {
+  fp = fopen(f, "r");
+  assert(fp && "Invalid file pointer");
+}
+
+int Lexer::getNextChar() {
+  int ch;
+  if (has_lookahead_) {
+    has_lookahead_ = false;
+    ch = lookahead_;
+  } else {
+    ch = getc(fp);
+  }
+
+  if (ch == EOF) return ch;
+
+  if (ch == '\n') {
+    row_++;
+    col_ = 1;
+  } else {
+    col_++;
+  }
+  return ch;
+}
+
+Result<Token> Lexer::getNextToken() {
+  char ch = getNextChar();
 
   // skip the whitespace
   while (isspace(ch)) {
-    ch = getc(fp);
+    ch = getNextChar();
   }
 
-  if (ch == EOF) return tok_eof;
+  if (ch == EOF) return makeResult(Token::eof);
 
   if (ch == '=') {
-    ch = getc(fp);
+    ch = getNextChar();
     if (ch == '>') {
-      return tok_arrow;
+      return makeResult(Token::arrow);
     } else {
-      ungetc(ch, fp);
-      return '9999999';
+      std::ostringstream ss;
+      ss << "Expected '=>' at row " << row_ << ", col " << col_;
+      return Result<Token>::Error(ss.str());
     }
   }
   if (ch == '(') {
-    return tok_lparen;
+    return makeResult(Token::lparen);
   }
   if (ch == ')') {
-    return tok_rparen;
+    return makeResult(Token::rparen);
   }
 
   if (ch == '"') {
     IdentifierStr = "";
-    ch = getc(fp);
+    ch = getNextChar();
     while (ch != '"') {
       IdentifierStr += ch;
-      ch = getc(fp);
+      ch = getNextChar();
     }
-    return tok_string;
+    return makeResult(Token::string);
   }
 
   if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF) {
@@ -49,18 +77,23 @@ int Lexer::get_next_token() {
     while (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) &&
            ch != EOF) {
       IdentifierStr += ch;
-      ch = getc(fp);
+      ch = getNextChar();
     }
-    // if (ch != EOF)
-    ungetc(ch, fp);
+
+    // Re-add the last popped character onto the buffer.
+    lookahead_ = ch;
+    has_lookahead_ = true;
+
     if (IdentifierStr == "main") {
-      return tok_main;
+      return makeResult(Token::main);
     }
 
     if (IdentifierStr == "out") {
-      return tok_out;
+      return makeResult(Token::out);
     }
   }
 
-  return tok_identifier;
+  return makeResult(Token::identifier);
 }
+
+}  // namespace xos

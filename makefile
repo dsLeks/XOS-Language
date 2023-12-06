@@ -13,7 +13,7 @@ TEST = test
 all: $(EXE)
 
 $(EXE): $(OBJS) main.o
-	$(CXX) $(CPPFLAGS) $? -o $@
+	$(CXX) $(CPPFLAGS) $^ -o $@
 
 %.o: %.cpp $(HDRS)
 	$(CXX) $(CPPFLAGS) -c $< -o $@

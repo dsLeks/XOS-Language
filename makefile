@@ -31,4 +31,4 @@ clean:
 	rm -rf $(EXE) *.o $(TEST)
 
 format:
-	clang-format --style=google -i $(SRCS) main.cpp test.cpp
+	clang-format --style=google -i $(SRCS) main.cpp test.cpp $(HDRS)

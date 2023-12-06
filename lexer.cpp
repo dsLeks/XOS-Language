@@ -12,7 +12,7 @@ int Lexer::get_next_token() {
   char ch = getc(fp);
 
   // skip the whitespace
-  while (ch == ' ' || ch == '\n') {
+  while (isspace(ch)) {
     ch = getc(fp);
   }
 

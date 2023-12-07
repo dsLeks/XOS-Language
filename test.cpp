@@ -1,9 +1,15 @@
 #include <gtest/gtest.h>
 
+#include <sstream>
+
 #include "xos.h"
 
 TEST(Lexer, Identifiers) {
-  xos::Lexer lexer("test_input.txt");
+  std::stringstream ss;
+  ss << "main( () => () )\n"
+        "  out \"Hello World\"";
+  xos::Lexer lexer(ss);
+
   ASSERT_EQ(lexer.getNextToken().get().getKind(), xos::Token::main);
   ASSERT_EQ(lexer.getNextToken().get().getKind(), xos::Token::lparen);
   ASSERT_EQ(lexer.getNextToken().get().getKind(), xos::Token::lparen);

@@ -21,33 +21,36 @@ int Lexer::getNextChar() {
     ch = lookahead_;
   } else {
     ch = input_.get();
+
+    if (ch == '\n') {
+      row_++;
+      col_ = 0;
+    } else {
+      col_++;
+    }
   }
 
   if (ch == EOF) return ch;
-
-  if (ch == '\n') {
-    row_++;
-    col_ = 1;
-  } else {
-    col_++;
-  }
   return ch;
 }
 
 Result<Token> Lexer::getNextToken() {
   char ch = getNextChar();
+  uint32_t row = row_, col = col_;
 
   // skip the whitespace
   while (isspace(ch)) {
     ch = getNextChar();
+    row = row_;
+    col = col_;
   }
 
-  if (ch == EOF) return makeResult(Token::eof);
+  if (ch == EOF) return Token(Token::eof, row, col);
 
   if (ch == '=') {
     ch = getNextChar();
     if (ch == '>') {
-      return makeResult(Token::arrow);
+      return Token(Token::arrow, row, col);
     } else {
       std::ostringstream ss;
       ss << "Expected '=>' at row " << row_ << ", col " << col_;
@@ -55,10 +58,10 @@ Result<Token> Lexer::getNextToken() {
     }
   }
   if (ch == '(') {
-    return makeResult(Token::lparen);
+    return Token(Token::lparen, row, col);
   }
   if (ch == ')') {
-    return makeResult(Token::rparen);
+    return Token(Token::rparen, row, col);
   }
 
   if (ch == '"') {
@@ -68,7 +71,7 @@ Result<Token> Lexer::getNextToken() {
       IdentifierStr += ch;
       ch = getNextChar();
     }
-    return makeResult(Token::string);
+    return Token(Token::string, row, col);
   }
 
   if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF) {
@@ -84,15 +87,15 @@ Result<Token> Lexer::getNextToken() {
     has_lookahead_ = true;
 
     if (IdentifierStr == "main") {
-      return makeResult(Token::main);
+      return Token(Token::main, row, col);
     }
 
     if (IdentifierStr == "out") {
-      return makeResult(Token::out);
+      return Token(Token::out, row, col);
     }
   }
 
-  return makeResult(Token::identifier);
+  return Token(Token::identifier, row, col);
 }
 
 }  // namespace xos

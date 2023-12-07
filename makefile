@@ -1,6 +1,6 @@
 CC ?= gcc  # version?
 CXX ?= g++
-CPPFLAGS = -std=c++17  # TODO: Update to c++17?
+CPPFLAGS = -std=c++17
 
 # Add new source files here.
 SRCS = lexer.cpp

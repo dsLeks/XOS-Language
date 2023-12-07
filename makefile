@@ -25,7 +25,7 @@ test.o: test.cpp
 #
 #   $ make test GTEST_HDR=<path to include dir> GTEST_LIB=<path to lib dir>
 $(TEST): test.o $(OBJS)
-	$(CXX) $(CPPFLAGS) $? -o $@ -lgtest_main -lgtest -L$(GTEST_LIB)
+	$(CXX) $(CPPFLAGS) $^ -o $@ -lgtest_main -lgtest -L$(GTEST_LIB)
 
 clean:
 	rm -rf $(EXE) *.o $(TEST)

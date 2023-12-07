@@ -9,7 +9,7 @@ ones tested with locally.
 
 - gcc v13
 - make v4
-- [googletest v1.12.1](https://github.com/google/googletest/releases/tag/release-1.12.1))  (only needed for testing)
+- [googletest v1.12.1](https://github.com/google/googletest/releases/tag/release-1.12.1)  (only needed for testing)
 
 ## Building + Running
 

@@ -10,9 +10,8 @@
 
 namespace xos {
 
-Lexer::Lexer(const char *f) {
-  fp = fopen(f, "r");
-  assert(fp && "Invalid file pointer");
+Lexer::Lexer(std::istream &input) : input_(input) {
+  assert(input_.good() && "Unable to open input stream.");
 }
 
 int Lexer::getNextChar() {
@@ -21,7 +20,7 @@ int Lexer::getNextChar() {
     has_lookahead_ = false;
     ch = lookahead_;
   } else {
-    ch = getc(fp);
+    ch = input_.get();
   }
 
   if (ch == EOF) return ch;

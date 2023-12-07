@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include <iostream>
+#include <istream>
 #include <string>
 #include <vector>
 
@@ -60,7 +61,7 @@ class Result {
 
 class Lexer {
  public:
-  Lexer(const char *f);
+  Lexer(std::istream &input);
   Result<Token> getNextToken();
 
  private:
@@ -72,7 +73,7 @@ class Lexer {
 
   std::string IdentifierStr;
   double NumVal;
-  FILE *fp;
+  std::istream &input_;
   uint32_t row_ = 0, col_ = 0;
 
   bool has_lookahead_ = false;

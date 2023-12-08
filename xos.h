@@ -26,6 +26,8 @@ class Token {
 
   Token(Kind kind, uint32_t row, uint32_t col, std::string val)
       : kind_(kind), row_(row), col_(col), val_(val) {}
+  Token(Kind kind, uint32_t row, uint32_t col)
+      : kind_(kind), row_(row), col_(col) {}
   Token() = default;
 
   Kind getKind() const { return kind_; }

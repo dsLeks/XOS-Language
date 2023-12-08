@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +32,10 @@ class Token {
   uint32_t getRow() const { return row_; }
   uint32_t getCol() const { return col_; }
 
+  bool operator==(const Token &other) const {
+    return kind_ == other.kind_ && row_ == other.row_ && col_ == other.col_;
+  }
+
  private:
   Kind kind_;
   uint32_t row_, col_;
@@ -41,6 +46,7 @@ class Result {
  public:
   template <typename... ArgsTy>
   Result(ArgsTy... args) : result_(std::forward<ArgsTy>(args)...) {}
+  Result(const T &result) : result_(result) {}
 
   static Result Error(const std::string &msg) {
     Result result;
@@ -49,7 +55,10 @@ class Result {
   }
 
   bool hasError() const { return !err_.empty(); }
-  const T &get() const { return result_; }
+  const T &get() const {
+    assert(!hasError() && "Getting from an invalid result");
+    return result_;
+  }
   const auto &getErr() const { return err_; }
 
  private:
@@ -67,14 +76,10 @@ class Lexer {
  private:
   int getNextChar();
 
-  Result<Token> makeResult(Token::Kind kind) {
-    return Result<Token>(kind, row_, col_);
-  }
-
   std::string IdentifierStr;
   double NumVal;
   std::istream &input_;
-  uint32_t row_ = 0, col_ = 0;
+  uint32_t row_ = 1, col_ = 0;
 
   bool has_lookahead_ = false;
   int lookahead_;

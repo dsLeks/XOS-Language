@@ -6,6 +6,7 @@
 #include <istream>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace xos
 {
@@ -81,7 +82,7 @@ namespace xos
   class Lexer
   {
   public:
-    Lexer(std::istream &input);
+    Lexer(std::istream &input); // Should this not be ifstream?
     Result<Token> getNextToken();
 
   private:
@@ -101,36 +102,44 @@ namespace xos
     int lookahead_;
   };
 
+  class StrAST
+  {
+  public:
+    std::string StrVal;
+
+    StrAST(const std::string &StrVal) : StrVal(StrVal) {}
+  };
+
+  class PrototypeAST
+  {
+  public:
+    std::string Name;
+    std::vector<std::string> Args;
+    std::string returnType;
+    PrototypeAST(const std::string &Name, std::vector<std::string> Args, std::string returnType)
+        : Name(Name), Args(std::move(Args)), returnType(std::move(returnType)) {}
+
+    const std::string &getName() const { return Name; }
+  };
+
+  class FunctionAST
+  {
+  public:
+    std::unique_ptr<PrototypeAST> Proto;
+    std::unique_ptr<StrAST> Body;
+    FunctionAST(std::unique_ptr<PrototypeAST> Proto,
+                std::unique_ptr<StrAST> Body)
+        : Proto(std::move(Proto)), Body(std::move(Body)) {}
+  };
+
+  class Parser
+  {
+  public:
+    Lexer lexer_; // [TODO] make this unique_ptr?
+    Parser(std::istream &input) : lexer_(input) {}
+    void parse();
+    std::unique_ptr<PrototypeAST> parsePrototype(xos::Result<xos::Token> tokIden);
+    std::unique_ptr<FunctionAST> parseFunction(std::unique_ptr<PrototypeAST> proto);
+  };
+
 } // namespace xos
-
-class StrAST
-{
-  std::string StrVal;
-
-public:
-  StrAST(const std::string &StrVal) : StrVal(StrVal) {}
-};
-
-class PrototypeAST
-{
-  std::string Name;
-  std::vector<std::string> Args;
-  std::string returnType;
-
-public:
-  PrototypeAST(const std::string &Name, std::vector<std::string> Args, std::string returnType)
-      : Name(Name), Args(std::move(Args)), returnType(std::move(returnType)) {}
-
-  const std::string &getName() const { return Name; }
-};
-
-class FunctionAST
-{
-  std::unique_ptr<PrototypeAST> Proto;
-  std::unique_ptr<StrAST> Body;
-
-public:
-  FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-              std::unique_ptr<StrAST> Body)
-      : Proto(std::move(Proto)), Body(std::move(Body)) {}
-};

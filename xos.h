@@ -36,7 +36,8 @@ class Token {
   std::string getVal() const { return val_; }
 
   bool operator==(const Token &other) const {
-    return kind_ == other.kind_ && row_ == other.row_ && col_ == other.col_;
+    return kind_ == other.kind_ && row_ == other.row_ && col_ == other.col_ &&
+           val_ == other.val_;
   }
 
  private:

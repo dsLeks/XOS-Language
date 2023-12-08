@@ -18,7 +18,7 @@ $(EXE): $(OBJS) main.o
 %.o: %.cpp $(HDRS)
 	$(CXX) $(CPPFLAGS) -c $< -o $@
 
-test.o: test.cpp
+test.o: test.cpp $(HDRS)
 	$(CXX) $(CPPFLAGS) -c $< -o $@ -I$(GTEST_HDR)
 
 # This is run with:

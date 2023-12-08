@@ -85,10 +85,6 @@ Result<Token> Lexer::getNextToken() {
     lookahead_ = ch;
     has_lookahead_ = true;
 
-    if (IdentifierStr == "main") {
-      return Token(Token::main, row, col);
-    }
-
     if (IdentifierStr == "out") {
       return Token(Token::out, row, col);
     }

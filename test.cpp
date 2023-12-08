@@ -14,7 +14,8 @@ TEST(Lexer, HelloWorld) {
   std::stringstream ss(kHelloWorldStr);
   xos::Lexer lexer(ss);
 
-  ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::main, 1, 1));
+  ASSERT_EQ(lexer.getNextToken().get(),
+            xos::Token(xos::Token::identifier, 1, 1, "main"));
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::lparen, 1, 5));
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::lparen, 1, 7));
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::rparen, 1, 8));

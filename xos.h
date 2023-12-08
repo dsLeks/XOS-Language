@@ -13,15 +13,14 @@ namespace xos {
 class Token {
  public:
   enum Kind {
-    eof = -1,
-    main = 1,
-    out = 2,
-    lparen = 3,
-    rparen = 4,
-    arrow = 5,
-    string = 6,
-    identifier = 7,
-    number = 8,
+    eof,
+    out,
+    lparen,
+    rparen,
+    arrow,
+    string,
+    identifier,
+    number,
   };
 
   Token(Kind kind, uint32_t row, uint32_t col, std::string val)

@@ -3,7 +3,7 @@ CXX ?= g++
 CPPFLAGS = -std=c++17
 
 # Add new source files here.
-SRCS = lexer.cpp
+SRCS = lexer.cpp parser.cpp
 HDRS = xos.h
 
 OBJS = $(SRCS:.cpp=.o)

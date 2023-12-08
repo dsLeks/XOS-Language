@@ -29,7 +29,7 @@ int Lexer::getNextChar() {
       col_++;
     }
   }
-  
+
   return ch;
 }
 
@@ -70,7 +70,7 @@ Result<Token> Lexer::getNextToken() {
       IdentifierStr += ch;
       ch = getNextChar();
     }
-    return Token(Token::string, row, col);
+    return Token(Token::string, row, col, IdentifierStr);
   }
 
   if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF) {
@@ -94,7 +94,7 @@ Result<Token> Lexer::getNextToken() {
     }
   }
 
-  return Token(Token::identifier, row, col);
+  return Token(Token::identifier, row, col, IdentifierStr);
 }
 
 }  // namespace xos

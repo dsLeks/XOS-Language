@@ -24,6 +24,8 @@ class Token {
     number = 8,
   };
 
+  Token(Kind kind, uint32_t row, uint32_t col, std::string val)
+      : kind_(kind), row_(row), col_(col), val_(val) {}
   Token(Kind kind, uint32_t row, uint32_t col)
       : kind_(kind), row_(row), col_(col) {}
   Token() = default;
@@ -31,14 +33,17 @@ class Token {
   Kind getKind() const { return kind_; }
   uint32_t getRow() const { return row_; }
   uint32_t getCol() const { return col_; }
+  std::string getVal() const { return val_; }
 
   bool operator==(const Token &other) const {
-    return kind_ == other.kind_ && row_ == other.row_ && col_ == other.col_;
+    return kind_ == other.kind_ && row_ == other.row_ && col_ == other.col_ &&
+           val_ == other.val_;
   }
 
  private:
   Kind kind_;
   uint32_t row_, col_;
+  std::string val_;
 };
 
 template <typename T>

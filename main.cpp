@@ -20,9 +20,8 @@ int main(int argc, char **argv) {
       std::cerr << tok.getErr() << std::endl;
       return 1;
     }
-    std::cout << tok.get().getKind() << " , ";
-
     if (tok.get().getKind() == xos::Token::eof) break;
+    std::cout << tok.get().getVal() << " , ";
   }
 
   std::cout << std::endl;

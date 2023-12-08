@@ -23,7 +23,8 @@ TEST(Lexer, HelloWorld) {
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::rparen, 1, 14));
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::rparen, 1, 16));
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::out, 2, 3));
-  ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::string, 2, 7));
+  ASSERT_EQ(lexer.getNextToken().get(),
+            xos::Token(xos::Token::string, 2, 7, "Hello World"));
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::eof, 2, 20));
 }
 

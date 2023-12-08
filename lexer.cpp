@@ -29,8 +29,7 @@ int Lexer::getNextChar() {
       col_++;
     }
   }
-
-  if (ch == EOF) return ch;
+  
   return ch;
 }
 

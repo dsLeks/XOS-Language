@@ -38,4 +38,13 @@ TEST(Lexer, UnfinishedArrowToken) {
   ASSERT_EQ(result.getErr(), "Expected '=>' at row 1, col 1");
 }
 
+TEST(Lexer, UnhandledCharacter) {
+  std::stringstream ss("%");
+  xos::Lexer lexer(ss);
+
+  auto result = lexer.getNextToken();
+  ASSERT_TRUE(result.hasError());
+  ASSERT_EQ(result.getErr(), "Unhandled character '%'");
+}
+
 }  // namespace

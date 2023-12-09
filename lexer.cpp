@@ -74,9 +74,8 @@ Result<Token> Lexer::getNextToken() {
   }
 
   std::string identifier;
-  if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF) {
-    while (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) &&
-           ch != EOF) {
+  if (isalpha(ch)) {
+    while (isalpha(ch)) {
       identifier += ch;
       ch = getNextChar();
     }
@@ -85,12 +84,14 @@ Result<Token> Lexer::getNextToken() {
     lookahead_ = ch;
     has_lookahead_ = true;
 
-    if (identifier == "out") {
-      return Token(Token::out, row, col);
-    }
+    if (identifier == "out") return Token(Token::out, row, col);
+
+    return Token(Token::identifier, row, col, identifier);
   }
 
-  return Token(Token::identifier, row, col, identifier);
+  std::stringstream ss;
+  ss << "Unhandled character '" << ch << "'";
+  return Result<Token>::Error(ss.str());
 }
 
 }  // namespace xos

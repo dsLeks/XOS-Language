@@ -63,7 +63,10 @@ class Result {
     assert(!hasError() && "Getting from an invalid result");
     return result_;
   }
-  const auto &getErr() const { return err_; }
+  const auto &getErr() const {
+    assert(hasError() && "Expected an error");
+    return err_;
+  }
 
  private:
   Result() = default;

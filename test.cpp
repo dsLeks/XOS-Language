@@ -29,4 +29,13 @@ TEST(Lexer, HelloWorld) {
   ASSERT_EQ(lexer.getNextToken().get(), xos::Token(xos::Token::eof, 2, 20));
 }
 
+TEST(Lexer, UnfinishedArrowToken) {
+  std::stringstream ss("=");
+  xos::Lexer lexer(ss);
+
+  auto result = lexer.getNextToken();
+  ASSERT_TRUE(result.hasError());
+  ASSERT_EQ(result.getErr(), "Expected '=>' at row 1, col 1");
+}
+
 }  // namespace

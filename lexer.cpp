@@ -52,7 +52,7 @@ Result<Token> Lexer::getNextToken() {
       return Token(Token::arrow, row, col);
     } else {
       std::ostringstream ss;
-      ss << "Expected '=>' at row " << row_ << ", col " << col_;
+      ss << "Expected '=>' at row " << row << ", col " << col;
       return Result<Token>::Error(ss.str());
     }
   }

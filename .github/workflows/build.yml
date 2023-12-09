@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_test:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -29,3 +29,5 @@ jobs:
       run: make test GTEST_HDR=googletest-release-1.12.1/googletest/include GTEST_LIB=googletest-release-1.12.1/build/lib
     - name: Run test executable
       run: ./test
+    - name: Check formatting
+      run: make format-check

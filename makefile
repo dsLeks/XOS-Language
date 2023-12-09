@@ -32,3 +32,6 @@ clean:
 
 format:
 	clang-format --style=google -i $(SRCS) main.cpp test.cpp $(HDRS)
+
+format-check:
+	clang-format --style=google $(SRCS) main.cpp test.cpp $(HDRS) --dry-run -Werror

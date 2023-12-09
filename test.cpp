@@ -47,4 +47,14 @@ TEST(Lexer, UnhandledCharacter) {
   ASSERT_EQ(result.getErr(), "Unhandled character '%'");
 }
 
+TEST(Parser, ParseStr) {
+  std::stringstream ss("\"Hello World\"");
+  xos::Lexer lexer(ss);
+  xos::Parser parser(lexer);
+
+  auto result = parser.parseStr();
+  ASSERT_NE(result.get(), nullptr);
+  ASSERT_EQ(result->getStr(), "Hello World");
+}
+
 }  // namespace

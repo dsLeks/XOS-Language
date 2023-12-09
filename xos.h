@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <istream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -88,6 +89,28 @@ class Lexer {
 
   bool has_lookahead_ = false;
   int lookahead_;
+};
+
+namespace ast {
+
+class Str {
+ public:
+  Str(const std::string &str) : str_(str) {}
+  std::string getStr() const { return str_; }
+
+ private:
+  std::string str_;
+};
+
+}  // namespace ast
+
+class Parser {
+ public:
+  Parser(Lexer &lexer) : lexer_(lexer) {}
+  std::unique_ptr<ast::Str> parseStr();
+
+ private:
+  Lexer &lexer_;
 };
 
 }  // namespace xos

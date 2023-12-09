@@ -2,6 +2,8 @@
 
 XOS? SAUCE?
 
+![Build Status](https://github.com/github/docs/actions/workflows/test.yml/badge.svg)
+
 ## Min Requirements
 
 This could potentially build with earlier versions. These just happen to be the

@@ -83,7 +83,6 @@ class Lexer {
  private:
   int getNextChar();
 
-  double NumVal;
   std::istream &input_;
   uint32_t row_ = 1, col_ = 0;
 

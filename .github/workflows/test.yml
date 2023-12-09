@@ -5,15 +5,13 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  pull_request_review:
+  merge_group:
     branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
-
+  build_and_test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Get googletest

@@ -2,7 +2,7 @@
 
 XOS? SAUCE?
 
-![Build Status](https://github.com/github/docs/actions/workflows/test.yml/badge.svg)
+![Build Status](https://github.com/github/docs/actions/workflows/build.yml/badge.svg)
 
 ## Min Requirements
 

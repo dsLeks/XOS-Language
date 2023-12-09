@@ -57,4 +57,14 @@ TEST(Parser, ParseStr) {
   ASSERT_EQ(result->getStr(), "Hello World");
 }
 
+TEST(Parser, ParseOut) {
+  std::stringstream ss("out \"Hello World\"");
+  xos::Lexer lexer(ss);
+  xos::Parser parser(lexer);
+
+  auto result = parser.parseOut();
+  ASSERT_NE(result.get(), nullptr);
+  ASSERT_EQ(result->getExpr(), xos::ast::Str("Hello World"));
+}
+
 }  // namespace

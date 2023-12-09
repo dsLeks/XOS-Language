@@ -98,8 +98,19 @@ class Str {
   Str(const std::string &str) : str_(str) {}
   std::string getStr() const { return str_; }
 
+  bool operator==(const Str &other) const { return str_ == other.str_; }
+
  private:
   std::string str_;
+};
+
+class Out {
+ public:
+  Out(std::unique_ptr<Str> expr) : expr_(std::move(expr)) {}
+  const Str &getExpr() const { return *expr_; }
+
+ private:
+  std::unique_ptr<Str> expr_;
 };
 
 }  // namespace ast
@@ -108,6 +119,7 @@ class Parser {
  public:
   Parser(Lexer &lexer) : lexer_(lexer) {}
   std::unique_ptr<ast::Str> parseStr();
+  std::unique_ptr<ast::Out> parseOut();
 
  private:
   Lexer &lexer_;

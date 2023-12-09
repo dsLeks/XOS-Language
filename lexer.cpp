@@ -64,20 +64,20 @@ Result<Token> Lexer::getNextToken() {
   }
 
   if (ch == '"') {
-    IdentifierStr = "";
+    std::string quoted_str;
     ch = getNextChar();
     while (ch != '"') {
-      IdentifierStr += ch;
+      quoted_str += ch;
       ch = getNextChar();
     }
-    return Token(Token::string, row, col, IdentifierStr);
+    return Token(Token::string, row, col, quoted_str);
   }
 
+  std::string identifier;
   if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) && ch != EOF) {
-    IdentifierStr = "";
     while (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) &&
            ch != EOF) {
-      IdentifierStr += ch;
+      identifier += ch;
       ch = getNextChar();
     }
 
@@ -85,12 +85,12 @@ Result<Token> Lexer::getNextToken() {
     lookahead_ = ch;
     has_lookahead_ = true;
 
-    if (IdentifierStr == "out") {
+    if (identifier == "out") {
       return Token(Token::out, row, col);
     }
   }
 
-  return Token(Token::identifier, row, col, IdentifierStr);
+  return Token(Token::identifier, row, col, identifier);
 }
 
 }  // namespace xos

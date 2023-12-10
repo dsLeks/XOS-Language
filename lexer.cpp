@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include <iostream>
-#include <sstream>
 #include <string>
 
 #include "xos.h"
@@ -51,9 +50,8 @@ Result<Token> Lexer::getNextToken() {
     if (ch == '>') {
       return Token(Token::arrow, row, col);
     } else {
-      std::ostringstream ss;
-      ss << "Expected '=>' at row " << row << ", col " << col;
-      return Result<Token>::Error(ss.str());
+      return Result<Token>::BuildError()
+             << "Expected '=>' at row " << row << ", col " << col;
     }
   }
   if (ch == '(') {
@@ -89,9 +87,7 @@ Result<Token> Lexer::getNextToken() {
     return Token(Token::identifier, row, col, identifier);
   }
 
-  std::stringstream ss;
-  ss << "Unhandled character '" << ch << "'";
-  return Result<Token>::Error(ss.str());
+  return Result<Token>::BuildError() << "Unhandled character '" << ch << "'";
 }
 
 }  // namespace xos

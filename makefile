@@ -10,6 +10,8 @@ OBJS = $(SRCS:.cpp=.o)
 EXE = main
 TEST = test
 
+.PHONY: all clean format format-checks
+
 all: $(EXE)
 
 $(EXE): $(OBJS) main.o

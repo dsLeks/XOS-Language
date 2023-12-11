@@ -20,6 +20,13 @@ $ make
 ./main
 ```
 
+Define `EXTRA_CPPFLAGS` to pass flags to the build. For example, to build with
+sanitizers:
+
+```
+$ make EXTRA_CPPFLAGS="-fsanitize=address -fsanitize=undefined"
+```
+
 ## Testing
 
 ```sh

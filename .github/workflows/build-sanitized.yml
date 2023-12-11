@@ -1,0 +1,31 @@
+name: Build + Test (Sanitized)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  merge_group:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Get googletest
+      run: |
+        wget https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+        unzip release-1.12.1.zip
+        cd googletest-release-1.12.1
+        mkdir build
+        cd build
+        cmake ..
+        make
+    - name: Build main executable
+      run: make EXTRA_CPPFLAGS="-fsanitize=address -fsanitize=undefined"
+    - name: Build test executable
+      run: make test GTEST_HDR=googletest-release-1.12.1/googletest/include GTEST_LIB=googletest-release-1.12.1/build/lib EXTRA_CPPFLAGS="-fsanitize=address -fsanitize=undefined"
+    - name: Run test executable
+      run: ./test

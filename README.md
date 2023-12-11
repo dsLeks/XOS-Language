@@ -3,6 +3,7 @@
 XOS? SAUCE?
 
 ![Build Status](https://github.com/dsLeks/XOS-Language/actions/workflows/build.yml/badge.svg)
+![Build Status Sanitized](https://github.com/dsLeks/XOS-Language/actions/workflows/build-sanitized.yml/badge.svg)
 
 ## Min Requirements
 

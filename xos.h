@@ -12,6 +12,18 @@
 
 namespace xos {
 
+// Just in case we ever decide to parse a file with more than 2^32 rows/cols,
+// let's reserve the type here so we can change it easily.
+using pos_t = uint32_t;
+
+struct SourceLocation {
+  pos_t row, col;
+
+  bool operator==(const SourceLocation &other) const {
+    return row == other.row && col == other.col;
+  }
+};
+
 class Token {
  public:
   enum Kind {
@@ -25,25 +37,23 @@ class Token {
     number,
   };
 
-  Token(Kind kind, uint32_t row, uint32_t col, std::string val)
-      : kind_(kind), row_(row), col_(col), val_(val) {}
-  Token(Kind kind, uint32_t row, uint32_t col)
-      : kind_(kind), row_(row), col_(col) {}
+  Token(Kind kind, pos_t row, pos_t col, std::string val)
+      : kind_(kind), start_{row, col}, val_(val) {}
+  Token(Kind kind, pos_t row, pos_t col) : kind_(kind), start_{row, col} {}
   Token() = default;
 
   Kind getKind() const { return kind_; }
-  uint32_t getRow() const { return row_; }
-  uint32_t getCol() const { return col_; }
+  pos_t getRow() const { return start_.row; }
+  pos_t getCol() const { return start_.col; }
   std::string getVal() const { return val_; }
 
   bool operator==(const Token &other) const {
-    return kind_ == other.kind_ && row_ == other.row_ && col_ == other.col_ &&
-           val_ == other.val_;
+    return kind_ == other.kind_ && start_ == other.start_ && val_ == other.val_;
   }
 
  private:
   Kind kind_;
-  uint32_t row_, col_;
+  SourceLocation start_;
   std::string val_;
 };
 

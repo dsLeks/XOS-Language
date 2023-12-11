@@ -6,6 +6,7 @@
 #include <iostream>
 #include <istream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -57,6 +58,9 @@ class Result {
   template <typename U>
   Result(const Result<U> &other) : err_(other.getErr()) {}
 
+  class BuildError;
+  Result(const BuildError &builder) : err_(builder.get()) {}
+
   static Result Error(const std::string &msg) {
     Result result;
     result.err_ = msg;
@@ -76,6 +80,31 @@ class Result {
     assert(hasError() && "Expected an error");
     return err_;
   }
+
+  // Example usage:
+  //
+  //   Result<Token> getTok() {
+  //     ...
+  //     if (err)
+  //       return Result<Token>::BuildError() << "Error on row " << row;
+  //     ...
+  //   }
+  //
+  class BuildError {
+   public:
+    BuildError() {}
+
+    template <typename U>
+    BuildError &operator<<(const U &u) {
+      buffer_ << u;
+      return *this;
+    }
+
+    std::string get() const { return buffer_.str(); }
+
+   private:
+    std::stringstream buffer_;
+  };
 
  private:
   Result() = default;

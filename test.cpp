@@ -77,4 +77,12 @@ TEST(Parser, ParseOut) {
   ASSERT_EQ(result->getExpr(), xos::ast::Str("Hello World"));
 }
 
+TEST(Result, ErrorBuilder) {
+  std::string msg("msg");
+  xos::Result<int> res = xos::Result<int>::BuildError()
+                         << "Test error " << 1 << " " << msg;
+  ASSERT_TRUE(res.hasError());
+  ASSERT_EQ(res.getErr(), "Test error 1 msg");
+}
+
 }  // namespace

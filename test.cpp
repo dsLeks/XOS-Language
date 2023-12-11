@@ -85,4 +85,23 @@ TEST(Result, ErrorBuilder) {
   ASSERT_EQ(res.getErr(), "Test error 1 msg");
 }
 
+TEST(Result, IndependentStorageSize) {
+  constexpr size_t kLargeSize = 1024;
+  using large_t = char[kLargeSize];
+
+  auto err = xos::Result<large_t>::Error("err");
+  static_assert(
+      sizeof(err) < sizeof(large_t),
+      "The size of Result<T> should be independent from the size of T.");
+}
+
+TEST(Result, ResultDoesntRequireDefaultCtor) {
+  struct S {
+    S() = delete;
+    int x, y;
+  };
+
+  [[maybe_unused]] auto err = xos::Result<S>::Error("err");
+}
+
 }  // namespace

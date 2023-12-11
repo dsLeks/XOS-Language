@@ -40,7 +40,6 @@ class Token {
   Token(Kind kind, pos_t row, pos_t col, std::string val)
       : kind_(kind), start_{row, col}, val_(val) {}
   Token(Kind kind, pos_t row, pos_t col) : kind_(kind), start_{row, col} {}
-  Token() = default;
 
   Kind getKind() const { return kind_; }
   pos_t getRow() const { return start_.row; }
@@ -61,9 +60,9 @@ template <typename T>
 class Result {
  public:
   template <typename... ArgsTy>
-  Result(ArgsTy... args) : result_(std::forward<ArgsTy>(args)...) {}
-  Result(const T &result) : result_(result) {}
-  Result(T &&result) : result_(std::move(result)) {}
+  Result(ArgsTy... args) : result_(new T(std::forward<ArgsTy>(args)...)) {}
+  Result(const T &result) : result_(new T(result)) {}
+  Result(T &&result) : result_(new T(std::move(result))) {}
 
   template <typename U>
   Result(const Result<U> &other) : err_(other.getErr()) {}
@@ -77,14 +76,14 @@ class Result {
     return result;
   }
 
-  bool hasError() const { return !err_.empty(); }
+  bool hasError() const { return !result_; }
   const T &get() const {
     assert(!hasError() && "Getting from an invalid result");
-    return result_;
+    return *result_;
   }
   T &get() {
     assert(!hasError() && "Getting from an invalid result");
-    return result_;
+    return *result_;
   }
   const auto &getErr() const {
     assert(hasError() && "Expected an error");
@@ -120,7 +119,7 @@ class Result {
   Result() = default;
 
   std::string err_;
-  T result_;
+  std::unique_ptr<T> result_;
 };
 
 class Lexer {

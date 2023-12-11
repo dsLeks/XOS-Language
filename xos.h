@@ -52,6 +52,10 @@ class Result {
   template <typename... ArgsTy>
   Result(ArgsTy... args) : result_(std::forward<ArgsTy>(args)...) {}
   Result(const T &result) : result_(result) {}
+  Result(T &&result) : result_(std::move(result)) {}
+
+  template <typename U>
+  Result(const Result<U> &other) : err_(other.getErr()) {}
 
   static Result Error(const std::string &msg) {
     Result result;
@@ -61,6 +65,10 @@ class Result {
 
   bool hasError() const { return !err_.empty(); }
   const T &get() const {
+    assert(!hasError() && "Getting from an invalid result");
+    return result_;
+  }
+  T &get() {
     assert(!hasError() && "Getting from an invalid result");
     return result_;
   }
@@ -106,7 +114,7 @@ class Str {
 
 class Out {
  public:
-  Out(std::unique_ptr<Str> expr) : expr_(std::move(expr)) {}
+  Out(std::unique_ptr<Str> &&expr) : expr_(std::move(expr)) {}
   const Str &getExpr() const { return *expr_; }
 
  private:
@@ -118,7 +126,7 @@ class Out {
 class Parser {
  public:
   Parser(Lexer &lexer) : lexer_(lexer) {}
-  std::unique_ptr<ast::Str> parseStr();
+  Result<std::unique_ptr<ast::Str>> parseStr();
   std::unique_ptr<ast::Out> parseOut();
 
  private:

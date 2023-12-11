@@ -54,7 +54,17 @@ TEST(Parser, ParseStr) {
 
   auto result = parser.parseStr();
   ASSERT_NE(result.get(), nullptr);
-  ASSERT_EQ(result->getStr(), "Hello World");
+  ASSERT_EQ(result.get()->getStr(), "Hello World");
+}
+
+TEST(Parser, ParseStrError) {
+  std::stringstream ss("Hello World");
+  xos::Lexer lexer(ss);
+  xos::Parser parser(lexer);
+
+  auto result = parser.parseStr();
+  ASSERT_TRUE(result.hasError());
+  ASSERT_EQ(result.getErr(), "Expected string on row 1, col 1");
 }
 
 TEST(Parser, ParseOut) {

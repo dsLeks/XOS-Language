@@ -1,6 +1,6 @@
 CC ?= gcc  # version?
 CXX ?= g++
-CPPFLAGS = -std=c++17
+CPPFLAGS = -std=c++17 $(EXTRA_CPPFLAGS)
 
 # Add new source files here.
 SRCS = lexer.cpp parser.cpp

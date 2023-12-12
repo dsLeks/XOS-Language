@@ -1,3 +1,6 @@
+#ifndef XOS_H_
+#define XOS_H_
+
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -172,3 +175,5 @@ class Parser {
 };
 
 }  // namespace xos
+
+#endif  // XOS_H_

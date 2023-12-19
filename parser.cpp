@@ -21,9 +21,9 @@ Result<std::unique_ptr<ast::Str>> Parser::parseStr() {
   }
   const Token &tok = res.get();
   if (tok.getKind() != Token::string) {
-    std::stringstream ss;
-    ss << "Expected string on row " << tok.getRow() << ", col " << tok.getCol();
-    return Result<std::unique_ptr<ast::Str>>::Error(ss.str());
+    return Result<std::unique_ptr<ast::Str>>::BuildError()
+           << "Expected string on row " << tok.getRow() << ", col "
+           << tok.getCol();
   }
   return std::make_unique<ast::Str>(tok.getVal());
 };

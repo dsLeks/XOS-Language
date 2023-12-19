@@ -71,8 +71,8 @@ Result<Token> Lexer::getNextToken() {
     return Token(Token::string, row, col, quoted_str);
   }
 
-  std::string identifier;
   if (isalpha(ch)) {
+    std::string identifier;
     while (isalpha(ch)) {
       identifier += ch;
       ch = getNextChar();

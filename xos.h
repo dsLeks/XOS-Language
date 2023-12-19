@@ -125,7 +125,7 @@ class Result {
 class Lexer {
  public:
   Lexer(std::istream &input);
-  Result<Token> getNextToken();
+  Result<Token> Lex();
 
  private:
   int getNextChar();

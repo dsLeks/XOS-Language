@@ -34,7 +34,7 @@ int Lexer::getNextChar() {
 
 Result<Token> Lexer::getNextToken() {
   char ch = getNextChar();
-  uint32_t row = row_, col = col_;
+  pos_t row = row_, col = col_;
 
   // skip the whitespace
   while (isspace(ch)) {

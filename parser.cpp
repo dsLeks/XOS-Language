@@ -15,21 +15,21 @@
 namespace xos {
 
 Result<std::unique_ptr<ast::Str>> Parser::parseStr() {
-  Result<Token> res = lexer_.getNextToken();
+  Result<Token> res = lexer_.Lex();
   if (res.hasError()) {
     return res;
   }
   const Token &tok = res.get();
   if (tok.getKind() != Token::string) {
-    std::stringstream ss;
-    ss << "Expected string on row " << tok.getRow() << ", col " << tok.getCol();
-    return Result<std::unique_ptr<ast::Str>>::Error(ss.str());
+    return Result<std::unique_ptr<ast::Str>>::BuildError()
+           << "Expected string on row " << tok.getRow() << ", col "
+           << tok.getCol();
   }
   return std::make_unique<ast::Str>(tok.getVal());
-};
+}
 
 std::unique_ptr<ast::Out> Parser::parseOut() {
-  Result<Token> tok = lexer_.getNextToken();
+  Result<Token> tok = lexer_.Lex();
   if (tok.hasError()) return nullptr;
 
   if (tok.get().getKind() != Token::out) return nullptr;

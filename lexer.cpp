@@ -32,9 +32,9 @@ int Lexer::getNextChar() {
   return ch;
 }
 
-Result<Token> Lexer::getNextToken() {
-  char ch = getNextChar();
-  uint32_t row = row_, col = col_;
+Result<Token> Lexer::Lex() {
+  int ch = getNextChar();
+  pos_t row = row_, col = col_;
 
   // skip the whitespace
   while (isspace(ch)) {
@@ -65,16 +65,17 @@ Result<Token> Lexer::getNextToken() {
     std::string quoted_str;
     ch = getNextChar();
     while (ch != '"') {
-      quoted_str += ch;
+      // FIXME(PiJoules): We should also test for EOF here.
+      quoted_str += static_cast<char>(ch);
       ch = getNextChar();
     }
     return Token(Token::string, row, col, quoted_str);
   }
 
-  std::string identifier;
   if (isalpha(ch)) {
+    std::string identifier;
     while (isalpha(ch)) {
-      identifier += ch;
+      identifier += static_cast<char>(ch);
       ch = getNextChar();
     }
 
@@ -87,7 +88,8 @@ Result<Token> Lexer::getNextToken() {
     return Token(Token::identifier, row, col, identifier);
   }
 
-  return Result<Token>::BuildError() << "Unhandled character '" << ch << "'";
+  return Result<Token>::BuildError()
+         << "Unhandled character '" << static_cast<char>(ch) << "'";
 }
 
 }  // namespace xos

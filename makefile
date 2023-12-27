@@ -1,6 +1,6 @@
 CC ?= gcc  # version?
 CXX ?= g++
-CPPFLAGS = -std=c++17 -Wall -Wextra -Wconversion -Werror $(EXTRA_CPPFLAGS)
+CPPFLAGS = -std=c++17 -Wall -Wextra -Wconversion -Werror -fno-rtti -fno-exceptions $(EXTRA_CPPFLAGS)
 
 # Add new source files here.
 SRCS = lexer.cpp parser.cpp

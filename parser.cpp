@@ -15,7 +15,7 @@
 namespace xos {
 
 Result<std::unique_ptr<ast::Str>> Parser::parseStr() {
-  Result<Token> res = lexer_.getNextToken();
+  Result<Token> res = lexer_.Lex();
   if (res.hasError()) {
     return res;
   }
@@ -26,10 +26,10 @@ Result<std::unique_ptr<ast::Str>> Parser::parseStr() {
     return Result<std::unique_ptr<ast::Str>>::Error(ss.str());
   }
   return std::make_unique<ast::Str>(tok.getVal());
-};
+}
 
 std::unique_ptr<ast::Out> Parser::parseOut() {
-  Result<Token> tok = lexer_.getNextToken();
+  Result<Token> tok = lexer_.Lex();
   if (tok.hasError()) return nullptr;
 
   if (tok.get().getKind() != Token::out) return nullptr;

@@ -32,7 +32,7 @@ int Lexer::getNextChar() {
   return ch;
 }
 
-Result<Token> Lexer::getNextToken() {
+Result<Token> Lexer::Lex() {
   int ch = getNextChar();
   uint32_t row = row_, col = col_;
 

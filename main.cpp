@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   while (1) {
     xos::Result<xos::Token> tok = lexer.getNextToken();
     if (tok.hasError()) {
-      std::cerr << tok.getErr() << std::endl;
+      std::cerr << tok.getError() << std::endl;
       return 1;
     }
     if (tok.get().getKind() == xos::Token::eof) break;

@@ -68,7 +68,7 @@ class Result {
   Result(T &&result) : result_(new T(std::move(result))) {}
 
   template <typename U>
-  Result(const Result<U> &other) : err_(other.getErr()) {}
+  Result(const Result<U> &other) : err_(other.getError()) {}
 
   class BuildError;
   Result(const BuildError &builder) : err_(builder.get()) {}
@@ -88,7 +88,7 @@ class Result {
     assert(!hasError() && "Getting from an invalid result");
     return *result_;
   }
-  const auto &getErr() const {
+  const auto &getError() const {
     assert(hasError() && "Expected an error");
     return err_;
   }

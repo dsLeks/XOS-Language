@@ -141,8 +141,34 @@ class Lexer {
 };
 
 namespace ast {
+class Expr {
+ public:
+  virtual ~Expr() = default;
+};
 
-class Str {
+class Prototype {
+ public:
+  Prototype(const std::string &name, std::vector<std::string> args,
+            std::string return_type)
+      : name_(name), args_(args), return_type_(return_type) {}
+
+ private:
+  std::string name_;
+  std::vector<std::string> args_;
+  std::string return_type_;
+};
+
+class Func {
+ public:
+  Func(std::unique_ptr<Prototype> &&proto, std::unique_ptr<Expr> &&body)
+      : proto_(std::move(proto)), body_(std::move(body)) {}
+
+ private:
+  std::unique_ptr<Prototype> proto_;
+  std::unique_ptr<Expr> body_;
+};
+
+class Str : public Expr {
  public:
   Str(const std::string &str) : str_(str) {}
   std::string getStr() const { return str_; }
@@ -153,7 +179,7 @@ class Str {
   std::string str_;
 };
 
-class Out {
+class Out : public Expr {
  public:
   Out(std::unique_ptr<Str> &&expr) : expr_(std::move(expr)) {}
   const Str &getExpr() const { return *expr_; }
@@ -169,6 +195,7 @@ class Parser {
   Parser(Lexer &lexer) : lexer_(lexer) {}
   Result<std::unique_ptr<ast::Str>> parseStr();
   std::unique_ptr<ast::Out> parseOut();
+  std::unique_ptr<ast::Func> parseFunc();
 
  private:
   Lexer &lexer_;

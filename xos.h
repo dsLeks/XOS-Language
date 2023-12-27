@@ -134,7 +134,7 @@ class Lexer {
   int getNextChar();
 
   std::istream &input_;
-  uint32_t row_ = 1, col_ = 0;
+  pos_t row_ = 1, col_ = 0;
 
   bool has_lookahead_ = false;
   int lookahead_;

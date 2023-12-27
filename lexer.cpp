@@ -72,8 +72,8 @@ Result<Token> Lexer::Lex() {
     return Token(Token::string, row, col, quoted_str);
   }
 
-  std::string identifier;
   if (isalpha(ch)) {
+    std::string identifier;
     while (isalpha(ch)) {
       identifier += static_cast<char>(ch);
       ch = getNextChar();

@@ -26,7 +26,7 @@ Result<std::unique_ptr<ast::Str>> Parser::parseStr() {
     return Result<std::unique_ptr<ast::Str>>::Error(ss.str());
   }
   return std::make_unique<ast::Str>(tok.getVal());
-};
+}
 
 std::unique_ptr<ast::Out> Parser::parseOut() {
   Result<Token> tok = lexer_.Lex();

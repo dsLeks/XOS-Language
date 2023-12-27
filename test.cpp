@@ -35,7 +35,7 @@ TEST(Lexer, UnfinishedArrowToken) {
 
   auto result = lexer.Lex();
   ASSERT_TRUE(result.hasError());
-  ASSERT_EQ(result.getErr(), "Expected '=>' at row 1, col 1");
+  ASSERT_EQ(result.getError(), "Expected '=>' at row 1, col 1");
 }
 
 TEST(Lexer, UnhandledCharacter) {
@@ -44,7 +44,7 @@ TEST(Lexer, UnhandledCharacter) {
 
   auto result = lexer.Lex();
   ASSERT_TRUE(result.hasError());
-  ASSERT_EQ(result.getErr(), "Unhandled character '%'");
+  ASSERT_EQ(result.getError(), "Unhandled character '%'");
 }
 
 TEST(Parser, ParseStr) {
@@ -64,7 +64,7 @@ TEST(Parser, ParseStrError) {
 
   auto result = parser.parseStr();
   ASSERT_TRUE(result.hasError());
-  ASSERT_EQ(result.getErr(), "Expected string on row 1, col 1");
+  ASSERT_EQ(result.getError(), "Expected string on row 1, col 1");
 }
 
 TEST(Parser, ParseOut) {
@@ -82,7 +82,7 @@ TEST(Result, ErrorBuilder) {
   xos::Result<int> res = xos::Result<int>::BuildError()
                          << "Test error " << 1 << " " << msg;
   ASSERT_TRUE(res.hasError());
-  ASSERT_EQ(res.getErr(), "Test error 1 msg");
+  ASSERT_EQ(res.getError(), "Test error 1 msg");
 }
 
 TEST(Result, IndependentStorageSize) {

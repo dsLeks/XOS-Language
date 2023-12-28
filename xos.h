@@ -194,8 +194,8 @@ class Parser {
  public:
   Parser(Lexer &lexer) : lexer_(lexer) {}
   Result<std::unique_ptr<ast::Str>> parseStr();
-  std::unique_ptr<ast::Out> parseOut();
-  std::unique_ptr<ast::Func> parseFunc();
+  Result<std::unique_ptr<ast::Out>> parseOut();
+  Result<std::unique_ptr<ast::Func>> parseFunc();
 
  private:
   Lexer &lexer_;

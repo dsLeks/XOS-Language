@@ -74,7 +74,7 @@ TEST(Parser, ParseOut) {
 
   auto result = parser.parseOut();
   ASSERT_NE(result.get(), nullptr);
-  ASSERT_EQ(result->getExpr(), xos::ast::Str("Hello World"));
+  ASSERT_EQ(result.get()->getExpr(), xos::ast::Str("Hello World"));
 }
 
 TEST(Result, ErrorBuilder) {

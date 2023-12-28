@@ -25,22 +25,26 @@ Result<std::unique_ptr<ast::Str>> Parser::parseStr() {
            << "Expected string on row " << tok.getRow() << ", col "
            << tok.getCol();
   }
-  return std::make_unique<ast::Str>(tok.getVal());
+  return Result<std::unique_ptr<ast::Str>>(
+      std::make_unique<ast::Str>(tok.getVal()));
 }
 
-std::unique_ptr<ast::Out> Parser::parseOut() {
-  Result<Token> tok = lexer_.Lex();
-  if (tok.hasError()) return nullptr;
+Result<std::unique_ptr<ast::Out>> Parser::parseOut() {
+  Result<Token> res = lexer_.Lex();
+  if (res.hasError()) return res;
 
-  if (tok.get().getKind() != Token::out) return nullptr;
+  const Token &tok = res.get();
+  if (tok.getKind() != Token::out) {
+    return Result<std::unique_ptr<ast::Out>>::BuildError()
+           << "Expected 'out' on row " << tok.getRow() << ", col "
+           << tok.getCol();
+  }
 
-  Result<std::unique_ptr<ast::Str>> res = parseStr();
-  if (res.hasError()) return nullptr;
-
-  std::unique_ptr<ast::Str> &str = res.get();
-  if (!str) return nullptr;
-
-  return std::make_unique<ast::Out>(std::move(str));
+  Result<std::unique_ptr<ast::Str>> sres = parseStr();
+  if (sres.hasError()) return sres;
+  std::unique_ptr<ast::Str> &str = sres.get();
+  return Result<std::unique_ptr<ast::Out>>(
+      std::make_unique<ast::Out>(std::move(str)));
 }
 
 }  // namespace xos

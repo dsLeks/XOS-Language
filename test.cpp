@@ -104,4 +104,124 @@ TEST(Result, ResultDoesntRequireDefaultCtor) {
   [[maybe_unused]] auto err = xos::Result<S>::Error("err");
 }
 
+namespace rtti {
+enum Kind {
+  KA = 0,
+  KB,
+  KC,
+  KD,
+  KE,
+  KSeparate,
+};
+
+/* The heirarchy is:
+ *
+ *        A
+ *       / \
+ *      B   D
+ *     / \ /
+ *    C   E
+ */
+struct A;
+struct B;
+struct C;
+struct D;
+
+struct A {
+  virtual Kind getKind() const { return KA; }
+  // If it can be cast to A, then this will always be true. The compiler will
+  // reject casting of Separate to this.
+  static bool classof(const A&) { return true; }
+};
+struct B : public A {
+  Kind getKind() const override { return KB; }
+  static bool classof(const A& a);
+};
+struct C : public B {
+  Kind getKind() const override { return KC; }
+  static bool classof(const A& a) { return a.getKind() == KC; }
+};
+struct D : public A {
+  Kind getKind() const override { return KD; }
+  static bool classof(const A& a);
+};
+struct E : public B, public D {
+  Kind getKind() const override { return KE; }
+  static bool classof(const A& a) { return a.getKind() == KE; }
+};
+
+bool B::classof(const A& a) {
+  return a.getKind() == KB || C::classof(a) || E::classof(a);
+}
+bool D::classof(const A& a) { return a.getKind() == KD || E::classof(a); }
+}  // namespace rtti
+
+TEST(RTTI, dyn_cast) {
+  rtti::A a;
+  rtti::B b;
+  rtti::C c;
+  rtti::D d;
+
+  // Note we can't explicitly check E here since we'd run into the diamond of
+  // death where we'd first need to explicitly say E is either B or D before
+  // getting to A.
+  ASSERT_EQ(xos::dyn_cast<rtti::A>(a)->getKind(), rtti::KA);
+  ASSERT_EQ(xos::dyn_cast<rtti::A>(b)->getKind(), rtti::KB);
+  ASSERT_EQ(xos::dyn_cast<rtti::A>(c)->getKind(), rtti::KC);
+  ASSERT_EQ(xos::dyn_cast<rtti::A>(d)->getKind(), rtti::KD);
+
+  ASSERT_EQ(xos::dyn_cast<rtti::B>(a), nullptr);
+  ASSERT_EQ(xos::dyn_cast<rtti::B>(b)->getKind(), rtti::KB);
+  ASSERT_EQ(xos::dyn_cast<rtti::B>(c)->getKind(), rtti::KC);
+
+  ASSERT_EQ(xos::dyn_cast<rtti::C>(a), nullptr);
+  ASSERT_EQ(xos::dyn_cast<rtti::C>(b), nullptr);
+  ASSERT_EQ(xos::dyn_cast<rtti::C>(c)->getKind(), rtti::KC);
+
+  ASSERT_EQ(xos::dyn_cast<rtti::D>(a), nullptr);
+  ASSERT_EQ(xos::dyn_cast<rtti::D>(d)->getKind(), rtti::KD);
+}
+
+TEST(RTTI, isa) {
+  rtti::A a;
+  rtti::B b;
+  rtti::C c;
+  rtti::D d;
+
+  ASSERT_TRUE(xos::isa<rtti::A>(a));
+  ASSERT_TRUE(xos::isa<rtti::A>(b));
+  ASSERT_TRUE(xos::isa<rtti::A>(c));
+  ASSERT_TRUE(xos::isa<rtti::A>(d));
+
+  ASSERT_FALSE(xos::isa<rtti::B>(a));
+  ASSERT_TRUE(xos::isa<rtti::B>(b));
+  ASSERT_TRUE(xos::isa<rtti::B>(c));
+
+  ASSERT_FALSE(xos::isa<rtti::C>(a));
+  ASSERT_FALSE(xos::isa<rtti::C>(b));
+  ASSERT_TRUE(xos::isa<rtti::C>(c));
+
+  ASSERT_FALSE(xos::isa<rtti::D>(a));
+  ASSERT_TRUE(xos::isa<rtti::D>(d));
+}
+
+TEST(RTTI, cast) {
+  rtti::A a;
+  rtti::B b;
+  rtti::C c;
+  rtti::D d;
+
+  ASSERT_EQ(xos::cast<rtti::A>(a).getKind(), rtti::KA);
+  ASSERT_EQ(xos::cast<rtti::A>(b).getKind(), rtti::KB);
+  ASSERT_EQ(xos::cast<rtti::A>(c).getKind(), rtti::KC);
+  ASSERT_EQ(xos::cast<rtti::A>(d).getKind(), rtti::KD);
+
+  ASSERT_EQ(xos::cast<rtti::B>(b).getKind(), rtti::KB);
+  ASSERT_EQ(xos::cast<rtti::B>(c).getKind(), rtti::KC);
+
+  ASSERT_EQ(xos::cast<rtti::C>(c).getKind(), rtti::KC);
+
+  ASSERT_EQ(xos::cast<rtti::D>(d).getKind(), rtti::KD);
+}
+
 }  // namespace

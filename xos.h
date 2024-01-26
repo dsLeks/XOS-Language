@@ -140,17 +140,96 @@ class Lexer {
   int lookahead_;
 };
 
+// RTTI Helper Functions
+//
+// Classes can use this small version of RTTI by just implementing `static bool
+// classof(const Node &) {...}`. The `classof` method is a static method used to
+// determine if an object is an instance of the type we're checking.
+//
+// Example usage:
+//
+//   enum Kind { KA, KB };
+//   struct A {
+//     virtual Kind getKind() const { return KA; }
+//   };
+//   struct B : public A {
+//     Kind getKind() const override { return KB; }
+//     static bool classof(const A& a) { return a.getKind() == KB; }
+//   };
+//
+//   void func(A *maybe_b_ptr) {
+//     const B *b_ptr = dyn_cast<B>(maybe_b_ptr);
+//     if (b_ptr) {
+//       // b_ptr is definitely of type B.
+//       ...
+//     }
+//     const B &b_ref = cast<B>(*maybe_b_ptr);
+//     bool b = isa<B>(maybe_b_ptr);
+//     ...
+//   }
+//
+template <typename ToTy, typename FromTy>
+const ToTy *dyn_cast(const FromTy &from) {
+  if (ToTy::classof(from)) return static_cast<const ToTy *>(&from);
+  return nullptr;
+}
+
+template <typename ToTy, typename FromTy>
+const ToTy *dyn_cast(const FromTy *from) {
+  if (ToTy::classof(*from)) return static_cast<const ToTy *>(from);
+  return nullptr;
+}
+
+template <typename ToTy, typename FromTy>
+bool isa(const FromTy *from) {
+  return dyn_cast<ToTy>(from);
+}
+
+template <typename ToTy, typename FromTy>
+bool isa(const FromTy &from) {
+  return dyn_cast<ToTy>(from);
+}
+
+template <typename ToTy, typename FromTy>
+const ToTy &cast(const FromTy &from) {
+  assert(ToTy::classof(from));
+  return static_cast<const ToTy &>(from);
+}
+
+template <typename ToTy, typename FromTy>
+const ToTy *cast(const FromTy *from) {
+  assert(ToTy::classof(*from));
+  return static_cast<const ToTy *>(from);
+}
+
 namespace ast {
-class Expr {
- public:
-  virtual ~Expr() = default;
+
+enum NodeKind {
+  NK_Func,
+  NK_Prototype,
+
+  NK_ExprBegin,
+  NK_Str = NK_ExprBegin,
+  NK_Out,
+  NK_ExprEnd,
 };
 
-class Prototype {
+class Node {
+ public:
+  virtual ~Node() = default;
+  virtual NodeKind getKind() const = 0;
+};
+
+class Prototype : public Node {
  public:
   Prototype(const std::string &name, std::vector<std::string> args,
             std::string return_type)
       : name_(name), args_(args), return_type_(return_type) {}
+  static bool classof(const Node &node) {
+    return node.getKind() == NK_Prototype;
+  }
+
+  NodeKind getKind() const override { return NK_Prototype; }
 
  private:
   std::string name_;
@@ -158,19 +237,35 @@ class Prototype {
   std::string return_type_;
 };
 
-class Func {
+class Expr;
+
+class Func : public Node {
  public:
   Func(std::unique_ptr<Prototype> &&proto, std::unique_ptr<Expr> &&body)
       : proto_(std::move(proto)), body_(std::move(body)) {}
+  static bool classof(const Node &node) { return node.getKind() == NK_Func; }
+
+  NodeKind getKind() const override { return NK_Func; }
 
  private:
   std::unique_ptr<Prototype> proto_;
   std::unique_ptr<Expr> body_;
 };
 
+class Expr : public Node {
+ public:
+  static bool classof(const Node &node) {
+    return NK_ExprBegin <= node.getKind() && node.getKind() < NK_ExprEnd;
+  }
+};
+
 class Str : public Expr {
  public:
   Str(const std::string &str) : str_(str) {}
+  static bool classof(const Node &node) { return node.getKind() == NK_Str; }
+
+  NodeKind getKind() const override { return NK_Str; }
+
   std::string getStr() const { return str_; }
 
   bool operator==(const Str &other) const { return str_ == other.str_; }
@@ -182,6 +277,10 @@ class Str : public Expr {
 class Out : public Expr {
  public:
   Out(std::unique_ptr<Str> &&expr) : expr_(std::move(expr)) {}
+  static bool classof(const Node &node) { return node.getKind() == NK_Out; }
+
+  NodeKind getKind() const override { return NK_Out; }
+
   const Str &getExpr() const { return *expr_; }
 
  private:

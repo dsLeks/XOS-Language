@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <cassert>
 #include <iostream>
 #include <istream>
 #include <memory>

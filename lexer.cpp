@@ -32,7 +32,7 @@ int Lexer::getNextChar() {
   return ch;
 }
 
-Result<Token> Lexer::Lex() {
+Result<Token> Lexer::LexImpl() {
   int ch = getNextChar();
   pos_t row = row_, col = col_;
 

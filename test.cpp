@@ -29,6 +29,24 @@ TEST(Lexer, HelloWorld) {
   ASSERT_EQ(lexer.Lex().get(), xos::Token(xos::Token::eof, 2, 20));
 }
 
+TEST(Lexer, Peek) {
+  std::stringstream ss(kHelloWorldStr);
+  xos::Lexer lexer(ss);
+
+  xos::Token expected(xos::Token::identifier, 1, 1, "main");
+
+  // We can peek as much as we want and see the same token.
+  ASSERT_EQ(lexer.Peek().get(), expected);
+  ASSERT_EQ(lexer.Peek().get(), expected);
+  ASSERT_EQ(lexer.Peek().get(), expected);
+  ASSERT_EQ(lexer.Lex().get(), expected);
+
+  xos::Token lparen(xos::Token::lparen, 1, 5);
+  ASSERT_EQ(lexer.Peek().get(), lparen);
+  ASSERT_EQ(lexer.Peek().get(), lparen);
+  ASSERT_EQ(lexer.Peek().get(), lparen);
+}
+
 TEST(Lexer, UnfinishedArrowToken) {
   std::stringstream ss("=");
   xos::Lexer lexer(ss);

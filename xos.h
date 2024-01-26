@@ -93,6 +93,8 @@ class Result {
     return err_;
   }
 
+  T *Release() { return result_.release(); }
+
   // Example usage:
   //
   //   Result<Token> getTok() {
@@ -181,7 +183,7 @@ class Str : public Expr {
 
 class Out : public Expr {
  public:
-  Out(std::unique_ptr<Str> &&expr) : expr_(std::move(expr)) {}
+  Out(std::unique_ptr<Str> expr) : expr_(std::move(expr)) {}
   const Str &getExpr() const { return *expr_; }
 
  private:
@@ -193,9 +195,9 @@ class Out : public Expr {
 class Parser {
  public:
   Parser(Lexer &lexer) : lexer_(lexer) {}
-  Result<std::unique_ptr<ast::Str>> parseStr();
-  Result<std::unique_ptr<ast::Out>> parseOut();
-  Result<std::unique_ptr<ast::Func>> parseFunc();
+  Result<ast::Str> parseStr();
+  Result<ast::Out> parseOut();
+  Result<ast::Func> parseFunc();
 
  private:
   Lexer &lexer_;

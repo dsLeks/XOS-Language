@@ -40,6 +40,7 @@ class Token {
     number,
   };
 
+  Token() = default;
   Token(Kind kind, pos_t row, pos_t col, std::string val)
       : kind_(kind), start_{row, col}, val_(val) {}
   Token(Kind kind, pos_t row, pos_t col) : kind_(kind), start_{row, col} {}
@@ -128,16 +129,37 @@ class Result {
 class Lexer {
  public:
   Lexer(std::istream &input);
-  Result<Token> Lex();
+
+  Result<Token> Lex() {
+    if (has_lookahead_token_) {
+      has_lookahead_token_ = false;
+      return lookahead_token_;
+    }
+    return LexImpl();
+  }
+
+  Result<Token> Peek() {
+    if (!has_lookahead_token_) {
+      auto next = LexImpl();
+      if (next.hasError()) return next;
+
+      has_lookahead_token_ = true;
+      lookahead_token_ = next.get();
+    }
+    return lookahead_token_;
+  }
 
  private:
   int getNextChar();
+  Result<Token> LexImpl();
 
   std::istream &input_;
   pos_t row_ = 1, col_ = 0;
 
   bool has_lookahead_ = false;
   int lookahead_;
+  bool has_lookahead_token_ = false;
+  Token lookahead_token_;
 };
 
 namespace ast {

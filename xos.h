@@ -81,12 +81,22 @@ class Result {
   }
 
   bool hasError() const { return !result_; }
+  operator bool() const { return !hasError(); }
+  const T &operator*() const { return get(); }
+  T &operator*() { return get(); }
+  const T *operator->() const { return &get(); }
+  T *operator->() { return &get(); }
+
   const T &get() const {
-    assert(!hasError() && "Getting from an invalid result");
+    assert(!hasError() &&
+           "Getting from an invalid result. Don't forget to check if a result "
+           "is valid with `res.hasError()` before getting from it.");
     return *result_;
   }
   T &get() {
-    assert(!hasError() && "Getting from an invalid result");
+    assert(!hasError() &&
+           "Getting from an invalid result. Don't forget to check if a result "
+           "is valid with `res.hasError()` before getting from it.");
     return *result_;
   }
   const auto &getError() const {

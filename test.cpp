@@ -122,4 +122,19 @@ TEST(Result, ResultDoesntRequireDefaultCtor) {
   [[maybe_unused]] auto err = xos::Result<S>::Error("err");
 }
 
+TEST(Result, OperatorOverloads) {
+  struct S {
+    int x;
+    S(int x) : x(x) {}
+    bool operator==(const S &other) const { return x == other.x; }
+  };
+  xos::Result<S> good_res(4);
+  ASSERT_TRUE(good_res);
+  ASSERT_EQ(*good_res, S{4});
+  ASSERT_EQ(good_res->x, 4);
+
+  auto bad_res = xos::Result<S>::Error("err msg");
+  ASSERT_FALSE(bad_res);
+}
+
 }  // namespace

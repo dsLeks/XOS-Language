@@ -137,4 +137,30 @@ TEST(Result, OperatorOverloads) {
   ASSERT_FALSE(bad_res);
 }
 
+TEST(Result, ErrornessIndependentOfValue) {
+  // A result should be independent of the underlying value of the object. That
+  // is, if the underlying value can have some "falseness", the Result of that
+  // object should be treated as not an error unless it was constructed as an
+  // error.
+  xos::Result<int> int_res(0);
+  xos::Result<int *> int_ptr_res(nullptr);
+
+  struct S {
+    operator bool() const { return false; }
+  };
+  xos::Result<S> s_res(S{});
+
+  ASSERT_FALSE(int_res.hasError());
+  ASSERT_FALSE(int_ptr_res.hasError());
+  ASSERT_FALSE(s_res.hasError());
+
+  auto int_err = xos::Result<int>::Error("");
+  auto int_ptr_err = xos::Result<int *>::Error("");
+  auto s_err = xos::Result<S>::Error("");
+
+  ASSERT_TRUE(int_err.hasError());
+  ASSERT_TRUE(int_ptr_err.hasError());
+  ASSERT_TRUE(s_err.hasError());
+}
+
 }  // namespace

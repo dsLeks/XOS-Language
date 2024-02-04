@@ -71,8 +71,8 @@ TEST(Parser, ParseStr) {
   xos::Parser parser(lexer);
 
   auto result = parser.parseStr();
-  ASSERT_NE(result.get(), nullptr);
-  ASSERT_EQ(result.get()->getStr(), "Hello World");
+  ASSERT_FALSE(result.hasError());
+  ASSERT_EQ(result.get().getStr(), "Hello World");
 }
 
 TEST(Parser, ParseStrError) {
@@ -91,8 +91,8 @@ TEST(Parser, ParseOut) {
   xos::Parser parser(lexer);
 
   auto result = parser.parseOut();
-  ASSERT_NE(result.get(), nullptr);
-  ASSERT_EQ(result.get()->getExpr(), xos::ast::Str("Hello World"));
+  ASSERT_FALSE(result.hasError());
+  ASSERT_EQ(result.get().getExpr(), xos::ast::Str("Hello World"));
 }
 
 TEST(Result, ErrorBuilder) {

@@ -84,9 +84,8 @@ TEST(Parser, ParseStrError) {
   ASSERT_TRUE(result.hasError());
   ASSERT_EQ(result.getError(), "Expected string on row 1, col 1");
 }
-// TODO(PiJoules): Implement peak in the lexer, so we don't lex the out token by
-// the time we hit ParseOut
-TEST(Parser, DISABLED_ParseOut) {
+
+TEST(Parser, ParseOut) {
   std::stringstream ss("out \"Hello World\"");
   xos::Lexer lexer(ss);
   xos::Parser parser(lexer);
@@ -104,12 +103,13 @@ TEST(Parser, ParseFunc) {
   auto result = parser.parseFunc();
   ASSERT_FALSE(result.hasError()) << result.getError();
 
-  std::unique_ptr<xos::ast::Prototype> proto(
-      new xos::ast::Prototype("main", {}, ""));
+  xos::ast::Prototype proto("main", std::vector<std::string>(), "");
   std::unique_ptr<xos::ast::Str> hw(new xos::ast::Str("Hello World"));
-  std::unique_ptr<xos::ast::Out> out(new xos::ast::Out(std::move(hw)));
-  xos::ast::Func f(std::move(proto), std::move(out));
-  ASSERT_EQ(*result.get(), f);
+  std::unique_ptr<xos::ast::Out> out(
+      std::make_unique<xos::ast::Out>(std::move(hw)));
+  xos::ast::Func f(std::make_unique<xos::ast::Prototype>(proto),
+                   std::move(out));
+  ASSERT_EQ(result.get(), f);
 }
 
 TEST(Result, ErrorBuilder) {

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <cassert>
 #include <iostream>
 #include <istream>
 #include <memory>
@@ -178,6 +179,13 @@ namespace ast {
 class Expr {
  public:
   virtual ~Expr() = default;
+  bool operator==(
+      const Expr &other) const  // TODO(PiJoules): add rtti and implement the
+                                // comparison operator here.
+  {
+    const auto l = other;
+    return true;
+  };
 };
 
 class Prototype {
@@ -185,6 +193,10 @@ class Prototype {
   Prototype(const std::string &name, std::vector<std::string> args,
             std::string return_type)
       : name_(name), args_(args), return_type_(return_type) {}
+  bool operator==(const Prototype &other) const {
+    return name_ == other.name_ && args_ == other.args_ &&
+           return_type_ == other.return_type_;
+  }
 
  private:
   std::string name_;
@@ -194,8 +206,12 @@ class Prototype {
 
 class Func {
  public:
-  Func(std::unique_ptr<Prototype> &&proto, std::unique_ptr<Expr> &&body)
+  Func(std::unique_ptr<Prototype> proto, std::unique_ptr<Expr> body)
       : proto_(std::move(proto)), body_(std::move(body)) {}
+
+  bool operator==(const Func &other) const {
+    return *proto_ == *other.proto_ && *body_ == *other.body_;
+  }
 
  private:
   std::unique_ptr<Prototype> proto_;
@@ -215,7 +231,7 @@ class Str : public Expr {
 
 class Out : public Expr {
  public:
-  Out(std::unique_ptr<Str> expr) : expr_(std::move(expr)) {}
+  Out(std::unique_ptr<Str> &&expr) : expr_(std::move(expr)) {}
   const Str &getExpr() const { return *expr_; }
 
  private:
@@ -230,6 +246,8 @@ class Parser {
   Result<ast::Str> parseStr();
   Result<ast::Out> parseOut();
   Result<ast::Func> parseFunc();
+  Result<ast::Out> parseBody();
+  Result<ast::Prototype> parsePrototype(std::string name);
 
  private:
   Lexer &lexer_;

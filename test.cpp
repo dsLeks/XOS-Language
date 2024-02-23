@@ -95,6 +95,23 @@ TEST(Parser, ParseOut) {
   ASSERT_EQ(result.get().getExpr(), xos::ast::Str("Hello World"));
 }
 
+TEST(Parser, ParseFunc) {
+  std::stringstream ss("main( () => () ) out \"Hello World\"");
+  xos::Lexer lexer(ss);
+  xos::Parser parser(lexer);
+
+  auto result = parser.parseFunc();
+  ASSERT_FALSE(result.hasError()) << result.getError();
+
+  xos::ast::Prototype proto("main", std::vector<std::string>(), "");
+  std::unique_ptr<xos::ast::Str> hw(new xos::ast::Str("Hello World"));
+  std::unique_ptr<xos::ast::Out> out(
+      std::make_unique<xos::ast::Out>(std::move(hw)));
+  xos::ast::Func f(std::make_unique<xos::ast::Prototype>(proto),
+                   std::move(out));
+  ASSERT_EQ(result.get(), f);
+}
+
 TEST(Result, ErrorBuilder) {
   std::string msg("msg");
   xos::Result<int> res = xos::Result<int>::BuildError()

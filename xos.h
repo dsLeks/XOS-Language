@@ -1,5 +1,4 @@
-#ifndef XOS_H_
-#define XOS_H_
+#pragma once
 
 #include <assert.h>
 #include <stdint.h>
@@ -9,10 +8,21 @@
 #include <cassert>
 #include <iostream>
 #include <istream>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wconversion"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Value.h"
+#include "llvm/IR/Verifier.h"
+#pragma GCC diagnostic pop
+using namespace llvm;
 
 namespace xos {
 
@@ -198,24 +208,12 @@ class Prototype {
            return_type_ == other.return_type_;
   }
 
+  std::string getName() const { return name_; }
+
  private:
   std::string name_;
   std::vector<std::string> args_;
   std::string return_type_;
-};
-
-class Func {
- public:
-  Func(std::unique_ptr<Prototype> proto, std::unique_ptr<Expr> body)
-      : proto_(std::move(proto)), body_(std::move(body)) {}
-
-  bool operator==(const Func &other) const {
-    return *proto_ == *other.proto_ && *body_ == *other.body_;
-  }
-
- private:
-  std::unique_ptr<Prototype> proto_;
-  std::unique_ptr<Expr> body_;
 };
 
 class Str : public Expr {
@@ -238,6 +236,24 @@ class Out : public Expr {
   std::unique_ptr<Str> expr_;
 };
 
+class Func {
+ public:
+  Func(std::unique_ptr<Prototype> proto, std::unique_ptr<Out> body)
+      : proto_(std::move(proto)), body_(std::move(body)) {}
+
+  bool operator==(const Func &other) const {
+    return *proto_ == *other.proto_ && *body_ == *other.body_;
+  }
+
+  const Prototype &getProto() const { return *proto_; }
+
+  const Out &getBody() const { return *body_; }
+
+ private:
+  std::unique_ptr<Prototype> proto_;
+  std::unique_ptr<Out> body_;
+};
+
 }  // namespace ast
 
 class Parser {
@@ -253,6 +269,24 @@ class Parser {
   Lexer &lexer_;
 };
 
-}  // namespace xos
+class Compiler {
+  std::unique_ptr<LLVMContext> TheContext;
+  std::unique_ptr<IRBuilder<>> Builder;
+  std::map<std::string, Value *> NamedValues;
 
-#endif  // XOS_H_
+ public:
+  std::unique_ptr<Module> TheModule;
+  Compiler();
+  Value *LogErrorV(const char *str);
+  // Value *NumberExprAST();
+  // Value *VariableExprAST();
+  // Value *BinaryExprAST();
+  // Value *CallExprAST();
+  Value *StringExprAST(const ast::Str &str);
+  Value *OutExprAST(const ast::Out &out);
+  Function *PrototypeAST(const ast::Prototype &);
+  Function *FunctionAST(const ast::Func &func);
+  void compile(const ast::Func &funcAST);
+};
+
+}  // namespace xos

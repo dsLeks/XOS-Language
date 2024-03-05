@@ -61,7 +61,7 @@ Result<ast::Func> Parser::parseFunc() {
   Result<ast::Out> body = parseBody();
   if (body.hasError()) return body;
   return Result<ast::Func>(std::unique_ptr<ast::Prototype>(pres.Release()),
-                           std::unique_ptr<ast::Expr>(body.Release()));
+                           std::unique_ptr<ast::Out>(body.Release()));
 }
 
 Result<ast::Out> Parser::parseBody() {

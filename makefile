@@ -1,6 +1,6 @@
 CC = gcc  # version?
 CXX = g++
-CPPFLAGS = -std=c++17 -Wall -Wextra -Wconversion -Werror -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections $(EXTRA_CPPFLAGS) -g
+CPPFLAGS = -std=c++17 -Wall -Wextra -Wconversion -Werror -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -g $(EXTRA_CPPFLAGS)
 LLVM_CONFIG ?= /Users/alekhya/Projects/llvm/build/bin/llvm-config
 LLVM_CONFIG_CXX_FLAGS = $(shell $(LLVM_CONFIG) --cxxflags)
 LLVM_CONFIG_LD_FLAGS = $(shell $(LLVM_CONFIG) --ldflags)

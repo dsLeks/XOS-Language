@@ -62,3 +62,15 @@ Hi! I am ALIVE!
 ```sh
 $ make test GTEST_HDR=<path to include dir> GTEST_LIB=<path to lib dir>
 ```
+
+### Reproducing the github actions builders
+
+The github actions can also be tested locally via  docker containers using
+[act](https://github.com/nektos/act).
+
+**NOTE**: Docker containers don't have `sudo` by default, so you'll want to
+remove all the `sudo`s in the build file you're running.
+
+```
+$ act --workflows .github/workflows/build.yml
+```

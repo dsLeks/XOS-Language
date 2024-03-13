@@ -6,9 +6,8 @@
 
 namespace {
 
-constexpr char kHelloWorldStr[] =
-    "main( () => () )\n"
-    "  out \"Hello World\"";
+constexpr char kHelloWorldStr[] = "main( () => () )\n"
+                                  "  out \"Hello World\"";
 
 TEST(Lexer, HelloWorld) {
   std::stringstream ss(kHelloWorldStr);
@@ -33,30 +32,30 @@ TEST(Lexer, ExpectEndlineCharacterAtLastChar) {
   char helloWorldStr[] = "\"Hello World\\n\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
-  std::string expectedString = "Hello World";
-  expectedString.push_back('\n');
+  std::string expectedStr = "Hello World";
+  expectedStr.push_back('\n');
   ASSERT_EQ(lexer.Lex().get(),
-            xos::Token(xos::Token::string, 1, 1, expectedString));
+            xos::Token(xos::Token::string, 1, 1, expectedStr));
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtFirstChar) {
   char helloWorldStr[] = "\"\\nHello World\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
-  std::string expectedString = "Hello World";
-  expectedString.insert(0, 1, '\n');
+  std::string expectedStr = "Hello World";
+  expectedStr.insert(0, 1, '\n');
   ASSERT_EQ(lexer.Lex().get(),
-            xos::Token(xos::Token::string, 1, 1, expectedString));
+            xos::Token(xos::Token::string, 1, 1, expectedStr));
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtSixthChar) {
   char helloWorldStr[] = "\"Hello\\n World\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
-  std::string expectedString = "Hello World";
-  expectedString.insert(5, 1, '\n');
+  std::string expectedStr = "Hello World";
+  expectedStr.insert(5, 1, '\n');
   ASSERT_EQ(lexer.Lex().get(),
-            xos::Token(xos::Token::string, 1, 1, expectedString));
+            xos::Token(xos::Token::string, 1, 1, expectedStr));
 }
 
 TEST(Lexer, Peek) {
@@ -210,4 +209,4 @@ TEST(Result, ErrornessIndependentOfValue) {
   ASSERT_TRUE(s_err.hasError());
 }
 
-}  // namespace
+} // namespace

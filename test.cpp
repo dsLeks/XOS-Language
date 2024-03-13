@@ -6,8 +6,9 @@
 
 namespace {
 
-constexpr char kHelloWorldStr[] = "main( () => () )\n"
-                                  "  out \"Hello World\"";
+constexpr char kHelloWorldStr[] =
+    "main( () => () )\n"
+    "  out \"Hello World\"";
 
 TEST(Lexer, HelloWorld) {
   std::stringstream ss(kHelloWorldStr);
@@ -209,4 +210,4 @@ TEST(Result, ErrornessIndependentOfValue) {
   ASSERT_TRUE(s_err.hasError());
 }
 
-} // namespace
+}  // namespace

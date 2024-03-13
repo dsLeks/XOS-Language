@@ -26,6 +26,10 @@ ones tested with locally.
 ## Building + Running
 
 ```sh
+$ cat test_input.txt
+main( () => () )
+    out "Hi! I am ALIVE!"
+
 $ make  # Creates ./main
 $ ./main test_input.txt
 ; ModuleID = 'my cool jit'

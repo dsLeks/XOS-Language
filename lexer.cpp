@@ -64,9 +64,17 @@ Result<Token> Lexer::LexImpl() {
   if (ch == '"') {
     std::string quoted_str;
     ch = getNextChar();
+    int prev = -1;
     while (ch != '"') {
       // FIXME(PiJoules): We should also test for EOF here.
+      if (ch == 'n' && prev == '\\') {
+        quoted_str.back() = '\n';
+        prev = -1;
+        ch = getNextChar();
+        continue;
+      }
       quoted_str += static_cast<char>(ch);
+      prev = ch;
       ch = getNextChar();
     }
     return Token(Token::string, row, col, quoted_str);

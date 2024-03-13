@@ -118,7 +118,7 @@ Function *Compiler::FunctionAST(const ast::Func &func) {
   for (auto &Arg : TheFunction->args())
     NamedValues[std::string(Arg.getName())] = &Arg;
 
-  if (Value *RetVal = OutExprAST(func.getBody())) {
+  if ([[maybe_unused]] Value *RetVal = OutExprAST(func.getBody())) {
     // Finish off the function.
     // Builder->CreateRet(RetVal);
     Builder->CreateRetVoid();

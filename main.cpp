@@ -14,12 +14,11 @@ int main(int argc, char **argv) {
 
   std::ifstream input(argv[1]);
   xos::Lexer lexer(input);
-  // xos::Result<xos::Token> tok = lexer.Lex();
   xos::Parser parser(lexer);
   auto func = parser.parseFunc();
   xos::Compiler compiler;
   compiler.compile(*func);
-  compiler.TheModule->dump();
+  compiler.TheModule->print(llvm::outs(), nullptr);
   std::cout << std::endl;
   return 0;
 }

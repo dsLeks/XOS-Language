@@ -6,9 +6,8 @@
 
 namespace {
 
-constexpr char kHelloWorldStr[] =
-    "main( () => () )\n"
-    "  out \"Hello World\"";
+constexpr char kHelloWorldStr[] = "main( () => () )\n"
+                                  "  out \"Hello World\"";
 
 TEST(Lexer, HelloWorld) {
   std::stringstream ss(kHelloWorldStr);
@@ -30,7 +29,7 @@ TEST(Lexer, HelloWorld) {
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtLastChar) {
-  char helloWorldStr[] = "\"Hello World\n\"";
+  char helloWorldStr[] = "\"Hello World\\n\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
   std::string expectedString = "Hello World";
@@ -40,7 +39,7 @@ TEST(Lexer, ExpectEndlineCharacterAtLastChar) {
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtFirstChar) {
-  char helloWorldStr[] = "\"\nHello World\"";
+  char helloWorldStr[] = "\"\\nHello World\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
   std::string expectedString = "Hello World";
@@ -50,7 +49,7 @@ TEST(Lexer, ExpectEndlineCharacterAtFirstChar) {
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtSixthChar) {
-  char helloWorldStr[] = "\"Hello\n World\"";
+  char helloWorldStr[] = "\"Hello\\n World\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
   std::string expectedString = "Hello World";
@@ -210,4 +209,4 @@ TEST(Result, ErrornessIndependentOfValue) {
   ASSERT_TRUE(s_err.hasError());
 }
 
-}  // namespace
+} // namespace

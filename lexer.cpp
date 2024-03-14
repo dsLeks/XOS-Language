@@ -62,10 +62,15 @@ Result<Token> Lexer::LexImpl() {
   }
 
   if (ch == '"') {
+    // FIXME(PiJoules): We should also test for EOF here.
     std::string quoted_str;
     ch = getNextChar();
     while (ch != '"') {
-      // FIXME(PiJoules): We should also test for EOF here.
+      if (ch == 'n' && !quoted_str.empty() && quoted_str.back() == '\\') {
+        quoted_str.back() = '\n';
+        ch = getNextChar();
+        continue;
+      }
       quoted_str += static_cast<char>(ch);
       ch = getNextChar();
     }

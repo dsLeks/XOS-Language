@@ -30,33 +30,30 @@ TEST(Lexer, HelloWorld) {
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtLastChar) {
-  char helloWorldStr[] = "\"Hello World\\n\"";
+  constexpr char helloWorldStr[] = "\"Hello World\\n\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
-  std::string expectedStr = "Hello World";
-  expectedStr.push_back('\n');
+  std::string_view expectedStr = "Hello World\n";
   ASSERT_EQ(lexer.Lex().get(),
-            xos::Token(xos::Token::string, 1, 1, expectedStr));
+            xos::Token(xos::Token::string, 1, 1, expectedStr.data()));
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtFirstChar) {
-  char helloWorldStr[] = "\"\\nHello World\"";
+  constexpr char helloWorldStr[] = "\"\\nHello World\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
-  std::string expectedStr = "Hello World";
-  expectedStr.insert(0, 1, '\n');
+  std::string_view expectedStr = "\nHello World";
   ASSERT_EQ(lexer.Lex().get(),
-            xos::Token(xos::Token::string, 1, 1, expectedStr));
+            xos::Token(xos::Token::string, 1, 1, expectedStr.data()));
 }
 
 TEST(Lexer, ExpectEndlineCharacterAtSixthChar) {
-  char helloWorldStr[] = "\"Hello\\n World\"";
+  constexpr char helloWorldStr[] = "\"Hello\\n World\"";
   std::stringstream ss(helloWorldStr);
   xos::Lexer lexer(ss);
-  std::string expectedStr = "Hello World";
-  expectedStr.insert(5, 1, '\n');
+  std::string_view expectedStr = "Hello\n World";
   ASSERT_EQ(lexer.Lex().get(),
-            xos::Token(xos::Token::string, 1, 1, expectedStr));
+            xos::Token(xos::Token::string, 1, 1, expectedStr.data()));
 }
 
 TEST(Lexer, Peek) {
